@@ -1,9 +1,13 @@
 import z from 'zod';
 
 const unitSchema = z.object({
-    username: z.string().optional(),
-    email: z.string(),
-    passwordHash: z.string(),
+    name: z.string(),
+    faction: z.string(),
+    subfaction: z.string(),
+    type: z.string(),
+    squadId: z.number(),
+    userId: z.number(),
+    imageUrl: z.string()
 })
 
 export function validateUnit(input) {

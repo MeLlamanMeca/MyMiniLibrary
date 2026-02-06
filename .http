@@ -1,0 +1,134 @@
+@baseUrl = http://localhost:3000
+@userId = 14
+@unitId = 27
+@squadId = 16
+@weaponId = 1
+
+### Users: get all
+GET {{baseUrl}}/users
+
+### Users: get by id
+GET {{baseUrl}}/users/{{userId}}
+
+### Users: create
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "alexaa",
+  "email": "alex@example.coaam",
+  "passwordHash": "test-hash"
+}
+
+### Users: verify
+POST {{baseUrl}}/users/auth/verify
+Content-Type: application/json
+
+{
+  "email": "alex@example.coaam",
+  "passwordHash": "test-hash"
+}
+
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+
+### Squads: get by id (route uses :id but controller reads query)
+GET {{baseUrl}}/squads/{{squadId}}
+
+### Squads: create (schema currently expects email/passwordHash)
+POST {{baseUrl}}/squads
+Content-Type: application/json
+
+{
+  "name": "Tactical Squad",
+    "move": 6,
+    "toughness": 4,
+    "save": "3+",
+    "wounds": 1,
+    "leadership": "7+",
+    "control": 1,
+    "composition": "5-10",
+    "compositionInfo": "Includes a Sergeant",
+    "compositionOptions": "Can include a Heavy Weapon",
+    "abilities": "And They Shall Know No Fear",
+    "ppu": 15,
+    "imageUrl": "https://example.com/image.jpg"
+}
+
+###
+PATCH {{baseUrl}}/squads/{{squadId}}
+Content-Type: application/json
+
+{
+    "composition": "5-10 cosas"
+}
+
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+
+
+### Units: get by id
+GET {{baseUrl}}/units/{{unitId}}
+
+### Units: create (schema currently expects email/passwordHash)
+POST {{baseUrl}}/units
+Content-Type: application/json
+
+{
+    "name": "Space Marine",
+    "faction": "Adeptus Astartes",
+    "subfaction": "Ultramarines",
+    "type": "Infantry",
+    "squadId": 16,
+    "userId": 14,
+    "imageUrl": "https://example.com/image.jpg"
+}
+
+###
+GET {{baseUrl}}/units?userId={{userId}}
+
+###
+GET {{baseUrl}}/units/28
+
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+
+
+### Weapons: get
+GET {{baseUrl}}/weapons/{{weaponId}}
+
+### Weapons: create
+POST {{baseUrl}}/weapons
+Content-Type: application/json
+
+{
+  "name": "Boltgun",
+  "range": 24,
+  "attacks": "2",
+  "skill": "3+",
+  "strength": 4,
+  "armourPiercing": 1,
+  "damage": 1
+}
+
+###
+PATCH {{baseUrl}}/weapons/{{weaponId}}
+Content-Type: application/json
+
+{
+  "range": 35,
+  "attacks": "3"
+}

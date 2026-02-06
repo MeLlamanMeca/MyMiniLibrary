@@ -5,7 +5,7 @@ export const WeaponRouter = ({ weaponModel }) => {
     const weaponRoute = Router()
 
     const weaponController = new WeaponController({ weaponModel })
-    weaponRoute.get('/:squadId', weaponController.get)
+    weaponRoute.get('/:id', weaponController.get)
     weaponRoute.post('/', weaponController.create)
     weaponRoute.patch('/:id', weaponController.update)
     weaponRoute.delete('/:id', weaponController.delete)

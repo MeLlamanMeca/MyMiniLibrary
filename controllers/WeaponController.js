@@ -8,16 +8,16 @@ export class WeaponController {
     }
 
     get = async (req, res) => {
-        const { squadId } = req.params
+        const { id } = req.params
         
-        const weapons = await this.weaponModel.find({ squadId })
+        const weapons = await this.weaponModel.find({ id })
 
         if(!weapons) { return res.status(404).json({ message: 'Weapons not found' }) }
         res.status(200).json(weapons)
     }
 
     create = async (req, res) => {
-        const { result } = validateWeapon(req.body)
+        const result = validateWeapon(req.body)
         if(!result.success) { return res.status(400).json({ message: 'Invalid weapon' }) }
 
         const createdWeapon = await this.weaponModel.create(result.data)
@@ -28,11 +28,11 @@ export class WeaponController {
 
     update = async (req, res) => {
         const { id } = req.params
-        const { result } = validateParcialWeapon(req.body)
+        const result = validateParcialWeapon(req.body)
         if(!result.success) { return res.status(400).json({ message: 'Invalid weapon' }) }
-        result.id = id;
+        result.data.id = id;
 
-        const updatedWeapon = await this.weaponModel.findByIdAndUpdate(result.data)
+        const updatedWeapon = await this.weaponModel.update(result.data)
 
         if(!updatedWeapon) { return res.status(404).json({ message: 'Weapon not found' }) }
         res.status(200).json(updatedWeapon)

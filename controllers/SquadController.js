@@ -8,10 +8,10 @@ export class SquadController {
     }
 
     get = async (req, res) => {
-        const { id } = req.query;
+        const { id } = req.params;
         
-        const squad = this.squadModel.find({ id })
-
+        const squad = await this.squadModel.find({ id })
+    
         if(!squad) return res.status(404).json({message: 'Error al obtener la información del escuadrón'})
         res.json(squad)
     }
@@ -30,7 +30,7 @@ export class SquadController {
         const { id } = req.params
         const result = validateParcialSquad(req.body)
         if(!result.success) return res.status(400).json({message: 'Invalid data'})
-        result.id = id
+        result.data.id = id
 
         const updatedSquad = await this.squadModel.update(result.data)
 

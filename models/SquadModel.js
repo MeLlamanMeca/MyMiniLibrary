@@ -4,10 +4,11 @@ export default class SquadModel {
         this.pool = pool
     }
 
-    async find( {squadId} ) {
+    async find({ id }) {
         try {
             const query = 'SELECT * FROM "Squad" WHERE id = $1'
-            return await this.pool.query(query, [squadId])
+            const result = await this.pool.query(query, [id])
+            return result.rows
         } 
         catch (err) { console.error('Error finding Squads:', err) }
     }
@@ -15,7 +16,8 @@ export default class SquadModel {
     async create({ name, move, toughness, save, wounds, leadership, control, composition, compositionInfo, compositionOptions, abilities, ppu, imageUrl }) {
         try {
             const query = 'INSERT INTO "Squad" (name, move, toughness, save, wounds, leadership, control, composition, "compositionInfo", "compositionOptions", abilities, ppu, "imageUrl") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *'
-            return await this.pool.query(query, [name, move, toughness, save, wounds, leadership, control, composition, compositionInfo, compositionOptions, abilities, ppu, imageUrl])
+            const result = await this.pool.query(query, [name, move, toughness, save, wounds, leadership, control, composition, compositionInfo, compositionOptions, abilities, ppu, imageUrl])
+            return result.rows
         }
         catch (err) { console.error('Error creating Squad:', err) }
     }
@@ -36,14 +38,16 @@ export default class SquadModel {
                 ppu = COALESCE($12, ppu),
                 "imageUrl" = COALESCE($13, "imageUrl")
                 WHERE id = $14`
-            return await this.pool.query(query, [name, move, toughness, save, wounds, leadership, control, composition, compositionInfo, compositionOptions, abilities, ppu, imageUrl, id])
+            const result = await this.pool.query(query, [name, move, toughness, save, wounds, leadership, control, composition, compositionInfo, compositionOptions, abilities, ppu, imageUrl, id])
+            return result.rows
         }
         catch (err) { console.error('Error updating Squad:', err) }
     }
     async delete({ id }) {
         try {
             const query = 'DELETE FROM "Squad" WHERE id = $1'
-            return await this.pool.query(query, [id])
+            const result = await this.pool.query(query, [id])
+            return result.rows
         }
         catch (err) { console.error('Error deleting Squad:', err) }
     }

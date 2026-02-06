@@ -16,7 +16,8 @@ export default class UnitModel {
                 query += ' AND faction = $2'
                 params.push(faction)
             }
-            return await this.pool.query(query, params)
+            const result = await this.pool.query(query, params)
+            return result.rows
         } 
         catch (err) { console.error('Error finding units:', err) }
     }
@@ -24,7 +25,8 @@ export default class UnitModel {
     async findById({ id }) {
         try {
             const query = 'SELECT * FROM "Unit" WHERE id = $1'
-            return await this.pool.query(query, [id])
+            const result = await this.pool.query(query, [id])
+            return result.rows
         } 
         catch (err) { console.error('Error finding unit by id:', err) }
     }
@@ -32,14 +34,16 @@ export default class UnitModel {
     async findByName({ name }) {
         try {
             const query = 'SELECT * FROM "Unit" WHERE name = $1'
-            return await this.pool.query(query, [name])
+            const result = await this.pool.query(query, [name])
+            return result
         }
         catch (err) { console.error('Error finding unit by name:', err) }
     }
-    async create({ name, faction, subfaction, userId }) {
+    async create({ name, faction, subfaction, userId, imageUrl, type, squadId }) {
         try {
-            const query = 'INSERT INTO "Unit" (name, faction, subfaction, "userId") VALUES ($1, $2, $3, $4) RETURNING *'
-            return await this.pool.query(query, [name, faction, subfaction, userId])
+            const query = 'INSERT INTO "Unit" (name, faction, subfaction, "userId", "imageUrl", type, "squadId") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *'
+            const result = await this.pool.query(query, [name, faction, subfaction, userId, imageUrl, type, squadId])
+            return result.rows
         }
         catch (err) { console.error('Error creating unit:', err) }
     }
@@ -52,14 +56,16 @@ export default class UnitModel {
                 type = COALESCE($4, type),
                 squadId = COALESCE($5, squadId)
                 WHERE id = $6`
-            return await this.pool.query(query, [name, faction, subfaction, type, squadId, id])
+            const result = await this.pool.query(query, [name, faction, subfaction, type, squadId, id])
+            return result.rows
         }
         catch (err) { console.error('Error updating unit:', err) }
     }
     async delete({ id }) {
         try {
             const query = 'DELETE FROM "Unit" WHERE id = $1'
-            return await this.pool.query(query, [id])
+            const result = await this.pool.query(query, [id])
+            return result.rows
         }
         catch (err) { console.error('Error deleting unit:', err) }
     }

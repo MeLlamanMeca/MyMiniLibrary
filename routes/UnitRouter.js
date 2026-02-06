@@ -6,9 +6,9 @@ export const UnitRouter = ({ unitModel }) => {
 
     const unitController = new UnitController({ unitModel })
 
+    unitRoute.get('', unitController.getByUser)
     unitRoute.get('/:id', unitController.get)
-    unitRoute.get('/:name', unitController.getByName)
-    unitRoute.get('/:userId', unitController.getByUser)
+    
 
     unitRoute.post('/', unitController.create)
     unitRoute.patch('/:id', unitController.update)
