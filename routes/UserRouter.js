@@ -7,9 +7,9 @@ export const UserRouter = ({ userModel }) => {
     const userController = new UserController({ userModel })
 
     userRoute.get('/', userController.getAll)
-    userRoute.get('/id=:id/info', userController.getInfoById)
+    userRoute.get('/:id', userController.getUserById)
     userRoute.post("/auth/verify", userController.verify)
-    userRoute.post('/create', userController.create)
+    userRoute.post('/', userController.create)
 
     return userRoute
 }

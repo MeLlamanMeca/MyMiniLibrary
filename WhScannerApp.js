@@ -1,8 +1,8 @@
 import express from 'express'
-import { UnitRouter } from './routers/unitRouter.js'
-import { UserRouter } from './routers/userRouter.js'
-import { SquadRouter } from './routers/squadRouter.js'
-import { WeaponRouter } from './routers/weaponRouter.js'
+import { UnitRouter } from './routes/UnitRouter.js'
+import { UserRouter } from './routes/UserRouter.js'
+import { SquadRouter } from './routes/SquadRouter.js'
+import { WeaponRouter } from './routes/WeaponRouter.js'
 
 export const WhScannerApp = ({ unitModel, userModel, squadModel, weaponModel }) => {
   const app = express()

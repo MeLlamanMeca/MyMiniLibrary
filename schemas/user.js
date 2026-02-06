@@ -1,15 +1,15 @@
 import z from 'zod';
 
 const userSchema = z.object({
-    username: z.string().optional(),
+    username: z.string(),
     email: z.string(),
     passwordHash: z.string(),
 })
 
-export function validateRecipe(input) {
+export function validateUser(input) {
     return userSchema.safeParse(input)
 }
 
-export function validateParcialRecipe(input) {
+export function validateParcialUser(input) {
     return userSchema.partial().safeParse(input)
 }

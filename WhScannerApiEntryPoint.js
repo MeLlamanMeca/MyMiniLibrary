@@ -1,7 +1,11 @@
 import { WhScannerApp } from './WhScannerApp.js'
 import UserModel from './models/UserModel.js'
-
-const { Pool } = require("pg");
+import unitModel from './models/UnitModel.js'
+import squadModel from './models/SquadModel.js'
+import weaponModel from './models/WeaponModel.js'
+import dotenv from 'dotenv'
+dotenv.config()
+import { Pool } from 'pg'
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -11,4 +15,4 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-WhScannerApp({ userModel: new UserModel({ pool }), unitModel: null, squadModel: null, weaponModel: null })
+WhScannerApp({ userModel: new UserModel({ pool }), unitModel: new unitModel({ pool }), squadModel: new squadModel({ pool }), weaponModel: new weaponModel({ pool }) })
