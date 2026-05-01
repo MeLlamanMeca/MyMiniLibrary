@@ -21,7 +21,7 @@ export class MiniController {
 
   createMini = async (req, res, next) => {
     try {
-      res.status(201).json({ message: "In progress" });
+      res.status(200).json({ message: "In progress" });
     } catch (error) {
       next(error);
     }
