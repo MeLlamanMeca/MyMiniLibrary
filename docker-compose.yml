@@ -1,0 +1,8 @@
+services:
+  api:
+    env_file:
+      - .env
+    build: .
+    container_name: MyMiniLibraryApi
+    ports:
+      - "${API_PORT}:8080"
