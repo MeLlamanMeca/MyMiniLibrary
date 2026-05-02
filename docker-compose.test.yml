@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  test_db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_TEST_USER:-testuser}
+      POSTGRES_PASSWORD: ${DB_TEST_PASSWORD:-testpassword}
+      POSTGRES_DB: ${DB_TEST_NAME:-test_minidb}
+    ports:
+      - "${DB_TEST_PORT:-5433}:5432" # Map host port 5433 to container port 5432
+    healthcheck:
+      test: ["CMD-HEALTCHECK", "pg_isready", "-U", "${DB_TEST_USER:-testuser}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

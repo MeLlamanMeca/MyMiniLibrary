@@ -70,9 +70,9 @@ All endpoints are prefixed with `/mini`:
 | Method | Route | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/mini/:id` | Get a miniature by ID | Public |
-| `POST` | `/mini/` | Create a miniature | Private (CORS) |
-| `PATCH` | `/mini/:id` | Update an existing miniature | Private (CORS) |
-| `DELETE` | `/mini/:id` | Delete a miniature | Private (CORS) |
+| `POST` | `/mini/` | Create a miniature | Private |
+| `PATCH` | `/mini/:id` | Update an existing miniature | Private |
+| `DELETE` | `/mini/:id` | Delete a miniature | Private |
 
 > **Note:** POST, PATCH, and DELETE operations are currently work in progress.
 

@@ -1,6 +1,5 @@
-// src/test/MiniController.test.js
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { MiniController } from '../../app/controllers/MiniController.js'
+import { MiniController } from '../../../app/controllers/MiniController.js'
 
 const mockMiniModel = {
   get: vi.fn()

@@ -1,0 +1,30 @@
+# Dependencias
+node_modules/
+vendor/
+.venv/
+__pycache__/
+
+# Archivos de sistema y logs
+.DS_Store
+*.log
+npm-debug.log*
+
+# Datos sensibles y variables de entorno
+.env
+.env.local
+*.pem
+*.key
+
+# Salidas de compilación
+dist/
+build/
+out/
+
+# Documentos pesados o binarios
+*.pdf
+*.exe
+*.bin
+*.zip
+*.png
+*.jpg
+*.jpeg
