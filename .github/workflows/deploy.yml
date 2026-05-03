@@ -1,0 +1,79 @@
+name: Deploy to Raspberry
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'raspberry-prod' || 'raspberry-staging' }}
+
+    steps:
+      - name: Install cloudflared
+        run: |
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+          chmod +x cloudflared
+          sudo mv cloudflared /usr/local/bin
+
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.RASPBERRY_SSH_KEY }}
+          HOST: ${{ secrets.RASPBERRY_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          cat <<EOF > ~/.ssh/config
+          Host $HOST
+              ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
+              StrictHostKeyChecking no
+          EOF
+
+      - name: Check database connectivity
+        env:
+          USER: ${{ secrets.RASPBERRY_USER }}
+          HOST: ${{ secrets.RASPBERRY_HOST }}
+        run: |
+          ssh -i ~/.ssh/id_rsa "$USER@$HOST" << 'REMOTEEOC'
+            PGPASSWORD=${{ secrets.DB_PASSWORD }} psql \
+              -h ${{ vars.DB_HOST }} \
+              -p ${{ vars.DB_PORT }} \
+              -U ${{ secrets.DB_USER }} \
+              -d ${{ vars.DB_NAME }} \
+              -c "SELECT 1" > /dev/null 2>&1 || (echo "DB is not accessible" && exit 1)
+          REMOTEEOC
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Copy repo to Raspberry
+        env:
+          USER: ${{ secrets.RASPBERRY_USER }}
+          HOST: ${{ secrets.RASPBERRY_HOST }}
+        run: |
+          tar -czf /tmp/repo.tar.gz --exclude='.git' --exclude='node_modules' .
+          scp -i ~/.ssh/id_rsa -o ProxyCommand="/usr/local/bin/cloudflared access ssh --hostname $HOST" \
+            /tmp/repo.tar.gz "$USER@$HOST:/tmp/repo.tar.gz"
+
+      - name: Deploy
+        env:
+          USER: ${{ secrets.RASPBERRY_USER }}
+          HOST: ${{ secrets.RASPBERRY_HOST }}
+          APP_DIR: ${{ vars.APP_DIR }}
+        run: |
+          ssh -i ~/.ssh/id_rsa "$USER@$HOST" << REMOTEEOC
+            mkdir -p ${{ env.APP_DIR }}
+            tar -xzf /tmp/repo.tar.gz -C ${{ env.APP_DIR }}
+            rm /tmp/repo.tar.gz
+            cd ${{ env.APP_DIR }}
+
+            echo "DB_HOST=${{ vars.DB_HOST }}" > .env
+            echo "DB_PORT=${{ vars.DB_PORT }}" >> .env
+            echo "DB_NAME=${{ vars.DB_NAME }}" >> .env
+            echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "API_PORT=${{ vars.API_PORT }}" >> .env
+            echo "CORS_PRIVATE_ORIGINS=${{ vars.API_PORT }}" >> .env
+
+            docker compose up -d --build
+          REMOTEEOC

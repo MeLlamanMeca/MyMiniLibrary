@@ -1,6 +1,3 @@
-<!-- AUTO-GENERATED FILE. DO NOT EDIT DIRECTLY. -->
-<!-- Source: docs/ai-instructions.md -->
-
 # Project: MyMiniLibrary API
 
 A REST API built with Node.js and Express for managing a personal miniature library.

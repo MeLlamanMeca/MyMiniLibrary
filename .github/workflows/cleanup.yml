@@ -1,32 +1,15 @@
-name: Test And Deploy
+name: Cleanup Staging
 
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
-  unit_test:
+  cleanup:
     runs-on: ubuntu-latest
+    environment: raspberry-staging
 
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run unit tests
-        run: npm test
-  
-  deploy:
-    needs: unit_test
-    runs-on: ubuntu-latest
-    environment: raspberry-prod
     steps:
       - name: Install cloudflared
         run: |
@@ -34,18 +17,14 @@ jobs:
           chmod +x cloudflared
           sudo mv cloudflared /usr/local/bin
 
-      - name: Deploy to Raspberry Pi
+      - name: Cleanup staging
         env:
           SSH_PRIVATE_KEY: ${{ secrets.RASPBERRY_SSH_KEY }}
           USER: ${{ secrets.RASPBERRY_USER }}
           HOST: ${{ secrets.RASPBERRY_HOST }}
         run: |
           mkdir -p ~/.ssh
-          
-          cat <<'EOF' > ~/.ssh/id_rsa
-          ${{ env.SSH_PRIVATE_KEY }}
-          EOF
-          
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
           cat <<EOF > ~/.ssh/config
@@ -55,7 +34,9 @@ jobs:
           EOF
 
           ssh -i ~/.ssh/id_rsa "$USER@$HOST" << 'REMOTEEOC'
-            cd ~/MyMiniLibrary
-            git pull origin main
-            docker compose up -d --build
+            if [ -d ~/MyMiniLibrary-staging ]; then
+              cd ~/MyMiniLibrary-staging
+              docker compose down -v
+              rm -rf ~/MyMiniLibrary-staging
+            fi
           REMOTEEOC
